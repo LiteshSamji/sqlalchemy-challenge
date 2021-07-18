@@ -1,5 +1,5 @@
 
-#import numpy
+import numpy
 import pandas as pd
 import datetime as dt
 import sqlalchemy
@@ -33,6 +33,7 @@ def home():
         f"----------------------------------<br/>"
         f"Available Routes:<br/>"
         f"/api/v1.0/precipitation<br/>"
+        f"/api/v1.0/stations<br/>"
         )
 
 @app.route("/api/v1.0/precipitation")
@@ -47,6 +48,25 @@ def precipitation():
     #Dictionary with date as the key and prcp as the value
     precip = {date: prcp for date, prcp in results}
     return jsonify(precip)
+
+@app.route("/api/v1.0/stations")
+def stations():
+    #results = session.query(Station.station).all()
+    results = session.query(station.id, station.station, station.name).all()
+
+    list_stations = []
+    
+    for st in results:
+        station_dict = {}
+
+        station_dict["id"] = st[0]
+        station_dict["station"] = st[1]
+        station_dict["name"] = st[2]
+
+        list_stations.append(station_dict)
+
+    # Return a JSON list of stations from the dataset.
+    return jsonify(list_stations)    
 
 if __name__ == "__main__":
     app.run(debug=True)
